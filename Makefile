@@ -1,32 +1,15 @@
-
-
-
-APPBIN_PATH ?= ~/
-LIBGCC_PATH = /usr/local/angstrom/armv7linaro/lib/gcc/arm-linux-gnueabihf/4.7.3
-LIBC_PATH   = /usr/local/angstrom/armv7linaro/lib
-
-ARCH ?= arm
+ARCH ?= x86
 OS_LINUX = yes
 
 ifeq ($(ARCH),arm)
-PATH=$PATH:/usr/local/angstrom/armv7linaro/bin/
-CROSS_COMPILE = arm-linux-gnueabihf-
 DEFS=-DARCH_ARM
 else
-CROSS_COMPILE:=
 DEFS=-DARCH_I386
 endif
 
-CC = $(CROSS_COMPILE)gcc
-LD = $(CROSS_COMPILE)ld
-OCP = $(CROSS_COMPILE)objcopy
-AS = $(CROSS_COMPILE)gcc -x assembler-with-cpp
-AR = $(CROSS_COMPILE)ar
-
+CC ?= gcc
 CP = /usr/bin/sudo /bin/cp
-
 MKFILE = Makefile
-
 SRC = dav.c EFM.c efm_c.c cport.c
 
 ifeq ($(OS_LINUX),yes)
@@ -34,20 +17,8 @@ DEFS += -DOS_LINUX
 SRC += term.c
 endif
 
-ifeq ($(ARCH),arm)
-CPFLAGS = $(MCFLAGS) $(DEFS) -mlittle-endian -mfloat-abi=hard -O2 -Wall -Wno-pointer-sign
-else
-CPFLAGS = $(MCFLAGS) $(DEFS) -g -O2 -Wall -m32
-endif
-
-CPFLAGS += -fno-strict-aliasing -lpthread -Ulinux -Dlinux=linux -I. -I/usr/local/include
-LIBDIR  = -L$(LIBGCC_PATH) -L$(LIBC_PATH)
-
-ifeq ($(ARCH),arm)
-LDFLAGS = $(MCFLAGS) -g -O2 -Wl,-EL -lm -lc -lgcc -lrt -lpthread $(LIBDIR)
-else
-LDFLAGS = $(MCFLAGS) -g -O2 -lm -lrt -m32 -lpthread
-endif
+CPFLAGS = $(MAKEFLAGS) $(DEFS) -g -O2 -Wall -m32
+LDFLAGS = $(MAKEFLAGS) -g -O2 -m32
 
 OBJS = $(SRC:.c=.o)
 DEPS = $(SRC:.c=.d)
@@ -59,7 +30,6 @@ target: all
 
 all: $(OBJS) $(MAKEFILE)
 	$(CC) $(OBJS) -o efm $(LDFLAGS)
-#	-$(CP) efm $(APPBIN_PATH)
 	
 %.d: %.c $(MKFILE)
 	@echo "Building dependencies for '$<'"
