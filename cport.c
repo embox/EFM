@@ -193,15 +193,14 @@ int set_cport_br(int br) {
 }
 
 int setup_port(int port, int br) {
-    
+
     if (open_cport(port))
         return -1;
     if (set_cport_br(br))
         return -1;
 
     term_setup();
-    term_set_mode_ncan();
-   
+
     return 0;
 }
 
@@ -235,7 +234,7 @@ int kbhit(int tm) {
         int i, flags = 0;
         flags = fcntl(STDIN_FILENO, F_GETFL);
         fcntl(STDIN_FILENO, F_SETFL, O_NONBLOCK);
-        count = fread(buf,1,512, stdin);
+        count = fread(buf, 1, 1, stdin);
         fcntl(STDIN_FILENO, F_SETFL, flags);
         for (i = 0;i < count; i++) {
             if (buf_len < STDIN_BUF_SIZE) {

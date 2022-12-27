@@ -3206,7 +3206,6 @@ void efm_task(void *parg) {
                 win_clear_screen(pwindow);
                 win_remove_en_win(pwindow);
                 set_term_colsize(80);
-                term_unset_mode_ncan();
 #ifdef CONFIG_EMBEDDED
                 OSTaskDel(OS_PRIO_SELF);
                 while (1) {
@@ -3368,6 +3367,5 @@ void run_efm() {
 #else
 void run_efm() {
     efm_task(NULL);
-    exit(0);
 }
 #endif

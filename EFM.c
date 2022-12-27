@@ -29,7 +29,7 @@ static int setup_io() {
 
 static int close_io() {
 #if defined(OS_LINUX)
-    term_set_mode_linux_console();
+    term_restore();
 #endif
     close_port();
     return 0;
